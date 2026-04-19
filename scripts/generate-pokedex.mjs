@@ -21,8 +21,11 @@ const MOD_BASE = "https://raw.githubusercontent.com/zeroxm/pokemon-roulette/main
 const DEX_URL = `${MOD_BASE}/src/app/services/pokemon-service/national-dex-pokemon.ts`;
 const FORMS_URL = `${MOD_BASE}/src/app/services/pokemon-forms-service/pokemon-forms.ts`;
 const FR_URL = `${MOD_BASE}/src/assets/i18n/fr.json`;
+const EVO_URL = `${MOD_BASE}/src/app/services/evolution-service/evolution-chain.ts`;
 
-const OUT_PATH = resolve(dirname(fileURLToPath(import.meta.url)), "..", "src/data/pokedex.ts");
+const SRC_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..", "src/data");
+const OUT_PATH = resolve(SRC_DIR, "pokedex.ts");
+const EVO_OUT_PATH = resolve(SRC_DIR, "evolution-chain.ts");
 
 async function fetchText(url) {
   const res = await fetch(url);
@@ -77,6 +80,17 @@ function tsLiteral(value) {
   if (value === null) return "null";
   if (typeof value === "number") return String(value);
   return JSON.stringify(value);
+}
+
+function parseEvolutionChain(src) {
+  // Format : `  123:[456, 789],` — une entrée par ligne.
+  const re = /^\s*(\d+):\[([^\]]+)\]/gm;
+  const result = {};
+  let m;
+  while ((m = re.exec(src))) {
+    result[Number(m[1])] = m[2].split(",").map((s) => Number(s.trim())).filter(Boolean);
+  }
+  return result;
 }
 
 async function main() {
@@ -168,6 +182,24 @@ export const POKEDEX: readonly PokedexEntry[] = [
 
   await writeFile(OUT_PATH, header + body + footer, "utf8");
   console.log(`✓ ${merged.length} entrées écrites dans ${OUT_PATH}`);
+
+  console.log("↓ evolution-chain.ts");
+  const evoSrc = await fetchText(EVO_URL);
+  const evoChain = parseEvolutionChain(evoSrc);
+  const evoEntries = Object.entries(evoChain)
+    .sort((a, b) => Number(a[0]) - Number(b[0]))
+    .map(([k, ids]) => `  ${k}: [${ids.join(", ")}],`)
+    .join("\n");
+  const evoFile = `// Chaînes d'évolution générées depuis zeroxm/pokemon-roulette.
+// Ne pas éditer à la main — régénérer via \`npm run generate:pokedex\`.
+// Source : ${EVO_URL}
+
+export const EVOLUTION_CHAIN: Readonly<Record<number, readonly number[]>> = {
+${evoEntries}
+} as const;
+`;
+  await writeFile(EVO_OUT_PATH, evoFile, "utf8");
+  console.log(`✓ ${Object.keys(evoChain).length} chaînes d'évolution écrites dans ${EVO_OUT_PATH}`);
 }
 
 main().catch((err) => {

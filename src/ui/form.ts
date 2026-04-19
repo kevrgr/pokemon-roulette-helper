@@ -2,6 +2,7 @@
 
 import type { BattleKind, GenerationId, PokedexEntry } from "../types/battle.js";
 import { byId, escapeHtml } from "./dom.js";
+import { getEvolutions } from "../logic/evolutions.js";
 import { findExactByName, searchPokedex } from "./pokedex-search.js";
 import {
   pokemonSpriteUrl,
@@ -104,8 +105,63 @@ function movePoke(from: "team" | "box", idx: number): void {
   renderListsAndRecalc();
 }
 
+function evolvePoke(dest: "team" | "box", idx: number, entry: PokedexEntry): void {
+  const arr = dest === "team" ? team : box;
+  const pk: UIPokemon = { name: entry.nameFr, type1: entry.type1, power: entry.power, id: entry.id };
+  if (entry.type2) pk.type2 = entry.type2;
+  arr[idx] = pk;
+  renderListsAndRecalc();
+}
+
+function startEvolveInline(dest: "team" | "box", idx: number): void {
+  const gridId = dest === "team" ? "team-list" : "box-list";
+  const slotEl = byId(gridId).querySelectorAll<HTMLElement>(".poke-slot")[idx];
+  if (!slotEl || slotEl.classList.contains("poke-slot-empty")) return;
+
+  const arr = dest === "team" ? team : box;
+  const current = arr[idx];
+  if (!current?.id) return;
+
+  const evolutions = getEvolutions(current.id);
+
+  slotEl.querySelector(".evolve-overlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "evolve-overlay";
+
+  if (evolutions.length === 0) {
+    overlay.innerHTML = `<span class="evolve-none">Pas d'évolution</span>
+      <button type="button" class="evolve-cancel">✕</button>`;
+    overlay.querySelector(".evolve-cancel")?.addEventListener("click", () => overlay.remove());
+  } else {
+    overlay.innerHTML = `
+      <button type="button" class="evolve-cancel" aria-label="Annuler">✕</button>
+      <ul class="evolve-list">
+        ${evolutions
+          .map(
+            (e, i) => `
+          <li class="evolve-option" data-idx="${i}">
+            <img class="poke-sprite" src="${pokemonSpriteUrl(e.id)}" alt="${escapeHtml(e.nameFr)}" loading="lazy" width="40" height="40">
+            <span class="evolve-option-name">${escapeHtml(e.nameFr)}</span>
+          </li>`,
+          )
+          .join("")}
+      </ul>`;
+    overlay.querySelector(".evolve-cancel")?.addEventListener("click", () => overlay.remove());
+    for (const li of overlay.querySelectorAll<HTMLLIElement>(".evolve-option")) {
+      li.addEventListener("click", () => {
+        const entry = evolutions[Number(li.dataset["idx"])];
+        if (entry) { overlay.remove(); evolvePoke(dest, idx, entry); }
+      });
+    }
+  }
+
+  slotEl.appendChild(overlay);
+  overlay.addEventListener("mouseleave", () => overlay.remove());
+}
+
 function renderListsAndRecalc(): void {
-  renderLists(removePoke, movePoke);
+  renderLists(removePoke, movePoke, startEvolveInline);
   recalc();
 }
 

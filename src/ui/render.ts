@@ -153,12 +153,21 @@ function roundOptionLabel(battle: BattleKind, gen: GenerationId, idx: number): s
   return `${ROUND_FALLBACK_LABEL[battle]} ${idx + 1}`;
 }
 
+function getRoundOffset(battle: BattleKind, gen: GenerationId): number {
+  if (battle === "gym") return 0;
+  const gymCount = GYM_LEADERS[gen]?.length ?? 0;
+  if (battle === "elite") return gymCount;
+  return gymCount + 4;
+}
+
 export function renderRounds(battle: BattleKind, gen: GenerationId, prev: number): void {
   const count = getOpponentCount(battle, gen);
+  const offset = getRoundOffset(battle, gen);
   const sel = byId<HTMLSelectElement>("sel-round");
   const opts = Array.from({ length: Math.max(count, 1) }, (_, i) => {
     const label = escapeHtml(roundOptionLabel(battle, gen, i));
-    return `<option value="${i}"${i === prev ? " selected" : ""}>${label}</option>`;
+    const val = offset + i;
+    return `<option value="${val}"${val === prev ? " selected" : ""}>${label}</option>`;
   });
   sel.innerHTML = opts.join("");
 }
@@ -207,10 +216,15 @@ function pokeSlotHtml(
       : `Mettre ${escapeHtml(p.name)} dans l'équipe`;
   const disabled = canMove ? "" : " disabled";
   const moveTitle = !canMove && dest === "box" ? ' title="Équipe complète"' : "";
+  const evolveBtn =
+    dest === "team"
+      ? `<button type="button" class="poke-slot-evolve poke-evolve" data-dest="${dest}" data-idx="${idx}" aria-label="Faire évoluer ${escapeHtml(p.name)}" title="Faire évoluer">✎</button>`
+      : "";
   return `
     <div class="poke-slot">
       <button type="button" class="poke-slot-move poke-move" data-dest="${dest}" data-idx="${idx}" aria-label="${moveLabel}"${moveTitle}${disabled}>${moveIcon}</button>
       <button type="button" class="poke-slot-remove poke-remove" data-dest="${dest}" data-idx="${idx}" aria-label="Retirer ${escapeHtml(p.name)}">✕</button>
+      ${evolveBtn}
       <div class="poke-slot-sprite-wrap">${sprite}</div>
       <span class="poke-slot-name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
       <span class="poke-slot-types">${types}</span>
@@ -244,6 +258,7 @@ function renderBoxGrid(): void {
 export function renderLists(
   onRemove: (dest: "team" | "box", idx: number) => void,
   onMove: (dest: "team" | "box", idx: number) => void,
+  onEvolve: (dest: "team" | "box", idx: number) => void,
 ): void {
   byId("team-count").textContent = `(${team.length}/${TEAM_MAX})`;
   byId("box-count").textContent = `(${box.length})`;
@@ -262,6 +277,13 @@ export function renderLists(
       const dest = btn.dataset["dest"] as "team" | "box";
       const idx = Number(btn.dataset["idx"]);
       onMove(dest, idx);
+    });
+  }
+  for (const btn of document.querySelectorAll<HTMLButtonElement>(".poke-evolve")) {
+    btn.addEventListener("click", () => {
+      const dest = btn.dataset["dest"] as "team" | "box";
+      const idx = Number(btn.dataset["idx"]);
+      onEvolve(dest, idx);
     });
   }
 }
