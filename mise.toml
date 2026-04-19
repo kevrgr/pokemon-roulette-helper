@@ -1,0 +1,5 @@
+# Version Node épinglée pour le projet. Règle la version majeure uniquement —
+# mise résout le dernier patch disponible localement. Surcharge la config globale.
+
+[tools]
+node = "24"

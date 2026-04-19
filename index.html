@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokemon Roulette Helper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="layout">
+      <!-- Panneau gauche : configuration -->
+      <div>
+        <div class="card">
+          <h1>Pokemon Roulette Helper</h1>
+          <p class="subtitle">Calcul des probabilités basé sur le code source du jeu.</p>
+
+          <p class="section-label">Configuration</p>
+          <div class="form-grid">
+            <div>
+              <label for="sel-gen">Génération</label>
+              <select id="sel-gen"></select>
+            </div>
+            <div class="form-row" style="margin-top: 8px">
+              <div>
+                <label for="sel-battle">Type de combat</label>
+                <select id="sel-battle">
+                  <option value="gym">Arène</option>
+                  <option value="elite">Conseil des 4</option>
+                  <option value="champion">Champion</option>
+                  <option value="rival">Rival</option>
+                </select>
+              </div>
+              <div>
+                <label for="sel-round">Round</label>
+                <select id="sel-round"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="section-label">Ajouter un Pokémon</p>
+          <div class="form-grid">
+            <div class="autocomplete">
+              <label for="inp-name">Nom</label>
+              <input
+                type="text"
+                id="inp-name"
+                placeholder="ex : Dracaufeu (3 lettres min.)"
+                autocomplete="off"
+                spellcheck="false"
+              />
+              <ul id="inp-name-suggestions" class="autocomplete-list" hidden></ul>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="button" id="btn-add-team" class="primary">+ Équipe</button>
+            <button type="button" id="btn-add-box">+ Boîte PC</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Panneau centre : adversaire + résultat -->
+      <div>
+        <div class="card">
+          <p class="section-label">Adversaire actuel</p>
+          <div class="opp-card">
+            <div class="opp-card-info">
+              <span class="opp-name" id="opp-name">—</span>
+              <div class="opp-types" id="opp-types"></div>
+            </div>
+            <div class="opp-card-sprite">
+              <div class="opp-sprite-wrap" id="opp-sprite"></div>
+            </div>
+          </div>
+
+          <p class="section-label">Probabilité de victoire</p>
+          <div class="metric-grid">
+            <div class="metric metric-yes">
+              <div class="val" id="r-yes">—</div>
+              <div class="lbl">slots OUI</div>
+            </div>
+            <div class="metric metric-no">
+              <div class="val" id="r-no">—</div>
+              <div class="lbl">slots NON</div>
+            </div>
+            <div class="metric" id="r-pct-metric">
+              <div class="val" id="r-pct">—</div>
+              <div class="lbl">probabilité</div>
+            </div>
+          </div>
+          <div class="bar-bg"><div class="bar-fill" id="r-bar" style="width: 0%"></div></div>
+
+          <div id="r-advice"></div>
+          <div class="matchup-info" id="r-matchup"></div>
+          <div class="retry-note" id="r-retry"></div>
+        </div>
+
+        <div class="card">
+          <p class="section-label">Suggestions de swap</p>
+          <div id="swap-list">
+            <p class="empty-hint">
+              Ajoutez des Pokémons dans la boîte PC pour voir les suggestions.
+            </p>
+          </div>
+        </div>
+
+        <div class="card card-box">
+          <p class="section-label">
+            Boîte PC <span id="box-count" style="color: var(--hint)">(0)</span>
+          </p>
+          <div class="box-grid" id="box-list"></div>
+        </div>
+      </div>
+
+      <!-- Panneau droit : équipe + objets -->
+      <div>
+        <div class="card card-team">
+          <p class="section-label">
+            Équipe active <span id="team-count" style="color: var(--hint)">(0/6)</span>
+          </p>
+          <div class="team-grid" id="team-list"></div>
+        </div>
+
+        <div class="card">
+          <p class="section-label">Objets possédés</p>
+          <div class="items-grid" id="items-grid"></div>
+        </div>
+      </div>
+
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

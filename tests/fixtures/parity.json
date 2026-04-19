@@ -1,0 +1,567 @@
+[
+  {
+    "input": {
+      "name": "gym_r0_mono",
+      "team": [
+        {
+          "type1": "water",
+          "power": 3
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 6,
+      "no": 1,
+      "pct": 86,
+      "advantage_label": "advantage",
+      "strong_count": 1,
+      "weak_count": 0,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "gym_r0_full_team",
+      "team": [
+        {
+          "type1": "fire",
+          "power": 3
+        },
+        {
+          "type1": "water",
+          "power": 4
+        },
+        {
+          "type1": "grass",
+          "power": 2
+        },
+        {
+          "type1": "electric",
+          "power": 5
+        },
+        {
+          "type1": "psychic",
+          "power": 1
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 18,
+      "no": 1,
+      "pct": 95,
+      "advantage_label": "advantage",
+      "strong_count": 2,
+      "weak_count": 1,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "advantage_one_strong",
+      "team": [
+        {
+          "type1": "water",
+          "power": 3
+        },
+        {
+          "type1": "normal",
+          "power": 2
+        },
+        {
+          "type1": "normal",
+          "power": 2
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 10,
+      "no": 1,
+      "pct": 91,
+      "advantage_label": "advantage",
+      "strong_count": 1,
+      "weak_count": 0,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "overwhelming_three_strong",
+      "team": [
+        {
+          "type1": "water",
+          "power": 3
+        },
+        {
+          "type1": "grass",
+          "power": 3
+        },
+        {
+          "type1": "ground",
+          "power": 3
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 13,
+      "no": 1,
+      "pct": 93,
+      "advantage_label": "overwhelming",
+      "strong_count": 3,
+      "weak_count": 0,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "disadvantage_one_weak",
+      "team": [
+        {
+          "type1": "fire",
+          "power": 3
+        },
+        {
+          "type1": "normal",
+          "power": 2
+        },
+        {
+          "type1": "normal",
+          "power": 2
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 8,
+      "no": 2,
+      "pct": 80,
+      "advantage_label": "disadvantage",
+      "strong_count": 0,
+      "weak_count": 1,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "severe_disadvantage_four_weak",
+      "team": [
+        {
+          "type1": "fire",
+          "power": 2
+        },
+        {
+          "type1": "fire",
+          "power": 2
+        },
+        {
+          "type1": "ice",
+          "power": 2
+        },
+        {
+          "type1": "ice",
+          "power": 2
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 9,
+      "no": 3,
+      "pct": 75,
+      "advantage_label": "severe_disadvantage",
+      "strong_count": 0,
+      "weak_count": 4,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "strong_neutralizes_weak",
+      "team": [
+        {
+          "type1": "water",
+          "power": 3
+        },
+        {
+          "type1": "fire",
+          "power": 2
+        },
+        {
+          "type1": "fire",
+          "power": 2
+        },
+        {
+          "type1": "ice",
+          "power": 2
+        },
+        {
+          "type1": "ice",
+          "power": 2
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 14,
+      "no": 1,
+      "pct": 93,
+      "advantage_label": "advantage",
+      "strong_count": 1,
+      "weak_count": 4,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "champion_various",
+      "team": [
+        {
+          "type1": "dragon",
+          "power": 5
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "champion",
+      "gen": 4,
+      "round": 0
+    },
+    "expected": {
+      "yes": 6,
+      "no": 3,
+      "pct": 67,
+      "advantage_label": null,
+      "strong_count": 0,
+      "weak_count": 0,
+      "opp_types": [],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": []
+  },
+  {
+    "input": {
+      "name": "elite_cycle_round5",
+      "team": [
+        {
+          "type1": "psychic",
+          "power": 4
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "elite",
+      "gen": 1,
+      "round": 5
+    },
+    "expected": {
+      "yes": 7,
+      "no": 7,
+      "pct": 50,
+      "advantage_label": "advantage",
+      "strong_count": 1,
+      "weak_count": 0,
+      "opp_types": ["fighting"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["fighting"]
+  },
+  {
+    "input": {
+      "name": "xattack_fractional_mean",
+      "team": [
+        {
+          "type1": "water",
+          "power": 3
+        },
+        {
+          "type1": "water",
+          "power": 4
+        }
+      ],
+      "box": [],
+      "items": ["x-attack"],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 13,
+      "no": 1,
+      "pct": 93,
+      "advantage_label": "advantage",
+      "strong_count": 2,
+      "weak_count": 0,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "xattack_doubled",
+      "team": [
+        {
+          "type1": "water",
+          "power": 3
+        }
+      ],
+      "box": [],
+      "items": ["x-attack", "x-attack"],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 12,
+      "no": 1,
+      "pct": 92,
+      "advantage_label": "advantage",
+      "strong_count": 1,
+      "weak_count": 0,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "potion_max_not_cumulative",
+      "team": [
+        {
+          "type1": "water",
+          "power": 3
+        }
+      ],
+      "box": [],
+      "items": ["potion", "super-potion", "hyper-potion"],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 6,
+      "no": 1,
+      "pct": 86,
+      "advantage_label": "advantage",
+      "strong_count": 1,
+      "weak_count": 0,
+      "opp_types": ["rock"],
+      "retry_bonus": 3,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "swap_suggestions",
+      "team": [
+        {
+          "type1": "fire",
+          "power": 2
+        },
+        {
+          "type1": "normal",
+          "power": 2
+        },
+        {
+          "type1": "normal",
+          "power": 2
+        }
+      ],
+      "box": [
+        {
+          "type1": "water",
+          "power": 3
+        },
+        {
+          "type1": "grass",
+          "power": 3
+        }
+      ],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 7,
+      "no": 2,
+      "pct": 78,
+      "advantage_label": "disadvantage",
+      "strong_count": 0,
+      "weak_count": 1,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": [
+        {
+          "remove": {
+            "type1": "fire",
+            "power": 2
+          },
+          "add": {
+            "type1": "water",
+            "power": 3
+          },
+          "new_pct": 91,
+          "gain": 13
+        },
+        {
+          "remove": {
+            "type1": "fire",
+            "power": 2
+          },
+          "add": {
+            "type1": "grass",
+            "power": 3
+          },
+          "new_pct": 91,
+          "gain": 13
+        },
+        {
+          "remove": {
+            "type1": "normal",
+            "power": 2
+          },
+          "add": {
+            "type1": "water",
+            "power": 3
+          },
+          "new_pct": 91,
+          "gain": 13
+        },
+        {
+          "remove": {
+            "type1": "normal",
+            "power": 2
+          },
+          "add": {
+            "type1": "grass",
+            "power": 3
+          },
+          "new_pct": 91,
+          "gain": 13
+        },
+        {
+          "remove": {
+            "type1": "normal",
+            "power": 2
+          },
+          "add": {
+            "type1": "water",
+            "power": 3
+          },
+          "new_pct": 91,
+          "gain": 13
+        }
+      ]
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "empty_team",
+      "team": [],
+      "box": [],
+      "items": [],
+      "battle": "gym",
+      "gen": 1,
+      "round": 0
+    },
+    "expected": {
+      "yes": 1,
+      "no": 1,
+      "pct": 50,
+      "advantage_label": null,
+      "strong_count": 0,
+      "weak_count": 0,
+      "opp_types": ["rock"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["rock"]
+  },
+  {
+    "input": {
+      "name": "late_round",
+      "team": [
+        {
+          "type1": "ice",
+          "power": 5
+        }
+      ],
+      "box": [],
+      "items": [],
+      "battle": "elite",
+      "gen": 1,
+      "round": 7
+    },
+    "expected": {
+      "yes": 8,
+      "no": 9,
+      "pct": 47,
+      "advantage_label": "advantage",
+      "strong_count": 1,
+      "weak_count": 0,
+      "opp_types": ["dragon"],
+      "retry_bonus": 0,
+      "swap_suggestions": []
+    },
+    "opp_types": ["dragon"]
+  }
+]

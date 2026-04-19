@@ -1,0 +1,838 @@
+:root {
+  --bg: #f8f7f4;
+  --surface: #ffffff;
+  --border: rgba(0, 0, 0, 0.12);
+  --border-md: rgba(0, 0, 0, 0.22);
+  --text: #1a1a18;
+  --muted: #6b6b67;
+  --hint: #9b9b97;
+  --green: #1d9e75;
+  --green-bg: #e1f5ee;
+  --green-text: #085041;
+  --amber: #ba7517;
+  --amber-bg: #faeeda;
+  --amber-text: #412402;
+  --red: #a32d2d;
+  --red-bg: #fcebeb;
+  --red-text: #501313;
+  --blue: #185fa5;
+  --blue-bg: #e6f1fb;
+  --blue-text: #042c53;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1a;
+    --surface: #242422;
+    --border: rgba(255, 255, 255, 0.1);
+    --border-md: rgba(255, 255, 255, 0.2);
+    --text: #e8e6df;
+    --muted: #9b9b97;
+    --hint: #6b6b67;
+    --green-bg: #04342c;
+    --green-text: #9fe1cb;
+    --amber-bg: #412402;
+    --amber-text: #fac775;
+    --red-bg: #501313;
+    --red-text: #f7c1c1;
+    --blue-bg: #042c53;
+    --blue-text: #b5d4f4;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 360px 1fr 340px;
+  gap: 20px;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+@media (max-width: 1200px) {
+  .layout {
+    grid-template-columns: 360px 1fr;
+  }
+}
+
+@media (max-width: 880px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 14px;
+}
+
+/* Teintes de cards alignées sur les boutons d'ajout : marron pour l'équipe,
+   violet pour la boîte PC. RGBA léger pour rester lisible en clair/sombre. */
+.card-team {
+  background: rgba(139, 107, 71, 0.1);
+  border-color: rgba(139, 107, 71, 0.35);
+}
+
+.card-box {
+  background: rgba(127, 119, 221, 0.1);
+  border-color: rgba(127, 119, 221, 0.35);
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+label {
+  font-size: 13px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 5px;
+}
+
+select,
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 9px 11px;
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border-md);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+select:focus,
+input:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+
+.form-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+button {
+  padding: 9px 16px;
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border-md);
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s;
+}
+
+button:hover {
+  background: var(--bg);
+}
+
+button.primary {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+button.primary:hover {
+  opacity: 0.85;
+}
+
+.btn-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.btn-row > button {
+  flex: 1;
+}
+
+/* Boutons d'ajout teintés : marron pour l'équipe, violet pour la boîte PC.
+   Overrides `.primary` pour rester sur un fond clair. */
+#btn-add-team,
+#btn-add-team.primary {
+  background: rgba(139, 107, 71, 0.18);
+  color: var(--text);
+  border-color: rgba(139, 107, 71, 0.5);
+}
+#btn-add-team:hover,
+#btn-add-team.primary:hover {
+  background: rgba(139, 107, 71, 0.3);
+  opacity: 1;
+}
+
+#btn-add-box {
+  background: rgba(127, 119, 221, 0.18);
+  color: var(--text);
+  border-color: rgba(127, 119, 221, 0.5);
+}
+#btn-add-box:hover {
+  background: rgba(127, 119, 221, 0.3);
+}
+
+.pokemon-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 20px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* Boîte PC : 5 colonnes fixes, minimum 2 lignes (10 slots) rendus côté JS.
+   Rentre dans la colonne centrale — cases plus compactes que l'équipe. */
+.box-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.box-grid .poke-slot {
+  padding: 6px 4px;
+  height: 150px;
+  gap: 4px;
+}
+
+.box-grid .poke-slot-sprite-wrap,
+.box-grid .poke-slot-sprite {
+  width: 64px;
+  height: 64px;
+}
+
+.box-grid .poke-slot-name {
+  font-size: 11px;
+}
+
+.box-grid .poke-slot-power {
+  font-size: 12px;
+}
+
+.box-grid .type-tag {
+  font-size: 9px;
+  padding: 1px 5px;
+}
+
+/* Boîte PC : types empilés verticalement, sprites -10% (14 → 13). */
+.box-grid .poke-slot-types {
+  flex-direction: column;
+  align-items: center;
+}
+
+.box-grid .type-sprite {
+  height: 13px;
+  margin-right: 0;
+}
+
+/* Toutes les cases (pleines ou vides) ont la même taille figée. */
+.poke-slot {
+  position: relative;
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 210px;
+  overflow: hidden;
+}
+
+.poke-slot-empty {
+  border-style: dashed;
+  opacity: 0.5;
+}
+
+.poke-slot-sprite-wrap {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.poke-slot-sprite {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.poke-slot-name {
+  font-weight: 500;
+  font-size: 13px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.poke-slot-types {
+  display: inline-flex;
+  gap: 3px;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+/* Équipe active : types empilés verticalement, sprites -10% (18 → 16). */
+.team-grid .poke-slot-types {
+  flex-direction: column;
+  align-items: center;
+}
+
+.team-grid .type-sprite {
+  height: 16px;
+  margin-right: 0;
+}
+
+.poke-slot-power {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.poke-slot-remove {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  background: none;
+  border: none;
+  color: var(--red);
+  font-size: 12px;
+  padding: 2px 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+/* Bouton de déplacement équipe ↔ boîte : symétrique au bouton supprimer. */
+.poke-slot-move {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 2px 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.poke-slot-move:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.poke-slot-move:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.poke-slot-remove:hover {
+  background: var(--red-bg);
+}
+
+.poke-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 0.5px solid var(--border);
+}
+
+.poke-name {
+  font-size: 15px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.poke-sprite {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.poke-sprite-empty {
+  display: inline-block;
+}
+
+.swap-poke {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.poke-meta {
+  font-size: 12px;
+  color: var(--muted);
+  flex: 1;
+  text-align: right;
+}
+
+/* ID du pokémon placé en tête de ligne dans le dropdown d'autocomplétion. */
+.poke-id {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  min-width: 44px;
+}
+
+.poke-remove {
+  font-size: 13px;
+  color: var(--red);
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+}
+
+.poke-remove:hover {
+  background: var(--red-bg);
+}
+
+.type-tag {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-weight: 500;
+  margin-right: 3px;
+}
+
+/* Sprite "plaquette" PokeAPI. Affiché inline à côté des noms, taille ajustée
+   pour rester lisible sans dominer les cards. Fallback via `onerror` vers
+   `.type-tag` texte en cas d'échec réseau. */
+.type-sprite {
+  display: inline-block;
+  height: 18px;
+  width: auto;
+  vertical-align: middle;
+  margin-right: 3px;
+  image-rendering: pixelated;
+}
+
+
+.autocomplete {
+  position: relative;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin-top: 2px;
+  max-height: 220px;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--surface);
+  border: 0.5px solid var(--border-md);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.autocomplete-list[hidden] {
+  display: none;
+}
+
+.autocomplete-item {
+  padding: 9px 12px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+  background: var(--bg);
+}
+
+.autocomplete-item-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.autocomplete-item-types {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+/* Dans le dropdown, sprite pokémon divisé par 2 (48 → 24). */
+.autocomplete-item .poke-sprite {
+  width: 24px;
+  height: 24px;
+}
+
+/* Sprite de type dans le dropdown : 13 px, sans marge latérale (les types
+   sont empilés en colonne par `.autocomplete-item-types`). */
+.autocomplete-item .type-sprite {
+  height: 13px;
+  margin-right: 0;
+}
+
+.items-grid {
+  display: flex;
+  justify-content: center;
+}
+
+.item-slot {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.item-slot.active {
+  background: var(--blue-bg);
+  border-color: var(--blue);
+}
+
+.item-slot-sprite-wrap {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-slot-sprite {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.item-slot-name {
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.item-slot-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 0.5px solid var(--border-md);
+  border-radius: 99px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.item-slot-stepper .stepper-btn {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 500;
+  padding: 4px 14px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.item-slot-stepper .stepper-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.item-slot-stepper .stepper-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.item-slot-stepper .stepper-count {
+  font-weight: 600;
+  font-size: 15px;
+  min-width: 28px;
+  text-align: center;
+  padding: 0 4px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.metric {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  text-align: center;
+}
+
+/* Teintes légères pour distinguer les trois colonnes du scoring.
+   Valeurs RGBA pour rester lisibles en thème clair comme sombre. */
+.metric-yes {
+  background: rgba(29, 158, 117, 0.1);
+}
+.metric-no {
+  background: rgba(226, 75, 74, 0.1);
+}
+.metric-good {
+  background: rgba(29, 158, 117, 0.15);
+}
+.metric-warn {
+  background: rgba(239, 159, 39, 0.15);
+}
+.metric-bad {
+  background: rgba(226, 75, 74, 0.15);
+}
+
+.metric .val {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.metric .lbl {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.bar-bg {
+  height: 10px;
+  background: var(--bg);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  border: 0.5px solid var(--border);
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition:
+    width 0.4s,
+    background 0.4s;
+}
+
+#r-advice {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.advice {
+  display: inline-block;
+  border-radius: var(--radius);
+  padding: 11px 18px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.advice.good {
+  background: var(--green-bg);
+  color: var(--green-text);
+}
+
+.advice.warn {
+  background: var(--amber-bg);
+  color: var(--amber-text);
+}
+
+.advice.bad {
+  background: var(--red-bg);
+  color: var(--red-text);
+}
+
+.matchup-info {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.swap-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 0.5px solid var(--border);
+  font-size: 15px;
+  flex-wrap: wrap;
+}
+
+.swap-row:last-child {
+  border-bottom: none;
+}
+
+.swap-arrow {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.swap-gain {
+  font-size: 13px;
+  color: var(--green);
+  margin-left: auto;
+  font-weight: 500;
+}
+
+.empty-hint {
+  font-size: 15px;
+  color: var(--hint);
+}
+
+.opp-card {
+  background: var(--bg);
+  border-radius: var(--radius);
+  font-size: 15px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.opp-card-sprite {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  min-height: 200px;
+}
+
+.opp-card-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+
+/* Sprite de type à côté du nom d'adversaire : 15% plus grand. */
+.opp-card-info .type-sprite {
+  height: 21px;
+}
+
+.opp-sprite-wrap {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: radial-gradient(circle at center, var(--surface) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.opp-sprite-wrap:empty {
+  display: none;
+}
+
+.opp-sprite {
+  width: 176px;
+  height: 176px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* Quand plusieurs sprites (leader composite type Cilan/Chili/Cress), réduire
+   pour les faire tenir côte à côte sans faire déborder la card. */
+.opp-sprite-wrap .opp-sprite:not(:only-child) {
+  width: 128px;
+  height: 128px;
+}
+
+.opp-name {
+  font-family: "Press Start 2P", monospace;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.opp-types {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.retry-note {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+hr {
+  border: none;
+  border-top: 0.5px solid var(--border);
+  margin: 12px 0;
+}
