@@ -1,0 +1,26 @@
+name: Cleanup old deployments
+
+on:
+  deployment_status:
+
+jobs:
+  cleanup:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+
+    steps:
+      - name: Delete all but the latest deployment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          LATEST_ID: ${{ github.event.deployment.id }}
+        run: |
+          gh api "repos/$REPO/deployments" --paginate --jq '.[].id' | while read id; do
+            if [ "$id" != "$LATEST_ID" ]; then
+              gh api -X POST "repos/$REPO/deployments/$id/statuses" -f state=inactive
+              gh api -X DELETE "repos/$REPO/deployments/$id"
+              echo "Deleted deployment $id"
+            fi
+          done
