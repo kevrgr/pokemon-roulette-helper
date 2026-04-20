@@ -34,4 +34,5 @@ Déploiement automatique sur GitHub Pages à chaque push sur `main`
 
 - Mod d'origine : [zeroxm/pokemon-roulette](https://github.com/zeroxm/pokemon-roulette)
 - Sprites pokémons / items / types : [PokeAPI/sprites](https://github.com/PokeAPI/sprites)
+- Icônes de types (autocomplétion) : [partywhale/pokemon-type-icons](https://github.com/partywhale/pokemon-type-icons)
 - Sprites de dresseurs : [zeroxm/pokemon-roulette-trainer-sprites](https://github.com/zeroxm/pokemon-roulette-trainer-sprites)
