@@ -13,7 +13,6 @@ import {
   renderResult,
   renderRounds,
   syncItemButtons,
-  typeTag,
 } from "./render.js";
 import { box, itemCounts, team, TEAM_MAX, type UIPokemon } from "./state.js";
 
@@ -57,32 +56,6 @@ function onGenChange(): void {
   onConfigChange();
 }
 
-// Types et power sont toujours dérivés du pokédex : aucune saisie manuelle.
-// Si le nom ne correspond à aucune entrée, on refuse l'ajout.
-function addPoke(dest: "team" | "box"): void {
-  const rawName = byId<HTMLInputElement>("inp-name").value.trim();
-  const matched = rawName ? findExactByName(rawName) : null;
-  if (!matched) return;
-
-  const pk: UIPokemon = {
-    name: matched.nameFr,
-    type1: matched.type1,
-    power: matched.power,
-    id: matched.id,
-  };
-  if (matched.type2) pk.type2 = matched.type2;
-
-  if (dest === "team" && team.length < TEAM_MAX) team.push(pk);
-  else if (dest === "box") box.push(pk);
-
-  clearForm();
-  renderListsAndRecalc();
-}
-
-function clearForm(): void {
-  byId<HTMLInputElement>("inp-name").value = "";
-  hideSuggestions();
-}
 
 function removePoke(dest: "team" | "box", idx: number): void {
   if (dest === "team") team.splice(idx, 1);
@@ -160,8 +133,110 @@ function startEvolveInline(dest: "team" | "box", idx: number): void {
   overlay.addEventListener("mouseleave", () => overlay.remove());
 }
 
+function startAddInline(dest: "team" | "box", idx: number): void {
+  const gridId = dest === "team" ? "team-list" : "box-list";
+  const slotMaybe = byId(gridId).querySelectorAll<HTMLElement>(".poke-slot")[idx];
+  if (!slotMaybe?.classList.contains("poke-slot-empty")) return;
+  const slotEl: HTMLElement = slotMaybe;
+
+  slotEl.querySelector(".add-overlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "add-overlay";
+  slotEl.classList.add("poke-slot-adding");
+
+  let localMatches: PokedexEntry[] = [];
+  let localActiveIdx = -1;
+
+  overlay.innerHTML = `
+    <button type="button" class="add-cancel" aria-label="Annuler">✕</button>
+    <div class="add-autocomplete">
+      <input type="text" class="add-input" placeholder="ex : Dracaufeu" autocomplete="off" spellcheck="false" />
+      <ul class="add-suggestions autocomplete-list" hidden></ul>
+    </div>`;
+
+  const input = overlay.querySelector<HTMLInputElement>(".add-input")!;
+  const list = overlay.querySelector<HTMLUListElement>(".add-suggestions")!;
+
+  const svgTypeIcon = (t: string) =>
+    `<img class="type-sprite" src="https://raw.githubusercontent.com/partywhale/pokemon-type-icons/main/icons/${t}.svg" alt="${t}" loading="lazy">`;
+
+  function renderLocalSuggestions(): void {
+    if (localMatches.length === 0) { list.hidden = true; list.innerHTML = ""; return; }
+    list.innerHTML = localMatches
+      .map(
+        (e, i) => `
+        <li class="autocomplete-item${i === localActiveIdx ? " active" : ""}" data-idx="${i}">
+          <img class="poke-sprite" src="${pokemonSpriteUrl(e.id)}" alt="${escapeHtml(e.nameFr)}" loading="lazy" width="24" height="24">
+          <span class="autocomplete-item-name">${escapeHtml(e.nameFr)}</span>
+          <span class="autocomplete-item-types">${svgTypeIcon(e.type1)}${e.type2 ? svgTypeIcon(e.type2) : ""}</span>
+        </li>`,
+      )
+      .join("");
+    list.hidden = false;
+    for (const li of list.querySelectorAll<HTMLLIElement>(".autocomplete-item")) {
+      li.addEventListener("mousedown", (ev) => {
+        ev.preventDefault();
+        const entry = localMatches[Number(li.dataset["idx"])];
+        if (entry) confirmAdd(entry);
+      });
+    }
+  }
+
+  function confirmAdd(entry: PokedexEntry): void {
+    const pk: UIPokemon = { name: entry.nameFr, type1: entry.type1, power: entry.power, id: entry.id };
+    if (entry.type2) pk.type2 = entry.type2;
+    if (dest === "team" && team.length < TEAM_MAX) team.push(pk);
+    else if (dest === "box") box.push(pk);
+    renderListsAndRecalc();
+  }
+
+  function closeOverlay(): void {
+    slotEl.classList.remove("poke-slot-adding");
+    overlay.remove();
+    document.removeEventListener("click", onOutsideClick);
+  }
+
+  function onOutsideClick(ev: MouseEvent): void {
+    if (!slotEl.contains(ev.target as Node)) closeOverlay();
+  }
+
+  input.addEventListener("input", () => {
+    localMatches = searchPokedex(input.value);
+    localActiveIdx = localMatches.length > 0 ? 0 : -1;
+    renderLocalSuggestions();
+  });
+
+  input.addEventListener("keydown", (ev) => {
+    if (ev.key === "ArrowDown" && localMatches.length > 0) {
+      ev.preventDefault();
+      localActiveIdx = (localActiveIdx + 1) % localMatches.length;
+      renderLocalSuggestions();
+    } else if (ev.key === "ArrowUp" && localMatches.length > 0) {
+      ev.preventDefault();
+      localActiveIdx = (localActiveIdx - 1 + localMatches.length) % localMatches.length;
+      renderLocalSuggestions();
+    } else if (ev.key === "Escape") {
+      closeOverlay();
+    } else if (ev.key === "Enter") {
+      const highlighted = localActiveIdx >= 0 ? localMatches[localActiveIdx] : undefined;
+      if (highlighted) { ev.preventDefault(); confirmAdd(highlighted); }
+      else {
+        const exact = findExactByName(input.value);
+        if (exact) confirmAdd(exact);
+      }
+    }
+  });
+
+  overlay.querySelector(".add-cancel")?.addEventListener("click", closeOverlay);
+
+  slotEl.appendChild(overlay);
+  setTimeout(() => document.addEventListener("click", onOutsideClick), 0);
+  input.focus();
+}
+
 function renderListsAndRecalc(): void {
-  renderLists(removePoke, movePoke, startEvolveInline);
+  renderLists(removePoke, movePoke, startEvolveInline, startAddInline);
   recalc();
 }
 
@@ -174,93 +249,6 @@ function adjustItem(name: string, delta: number): void {
   recalc();
 }
 
-// --- Autocomplétion nom FR → pré-remplit type1/type2/power -------------------
-
-let activeIdx = -1;
-let currentMatches: PokedexEntry[] = [];
-
-function applyEntry(entry: PokedexEntry): void {
-  byId<HTMLInputElement>("inp-name").value = entry.nameFr;
-}
-
-function renderSuggestions(): void {
-  const list = byId<HTMLUListElement>("inp-name-suggestions");
-  if (currentMatches.length === 0) {
-    list.hidden = true;
-    list.innerHTML = "";
-    return;
-  }
-  list.innerHTML = currentMatches
-    .map(
-      (e, i) => `
-      <li class="autocomplete-item${i === activeIdx ? " active" : ""}" data-idx="${i}">
-        <span class="poke-id">#${e.id}</span>
-        <img class="poke-sprite" src="${pokemonSpriteUrl(e.id)}" alt="${escapeHtml(e.nameFr)}" loading="lazy" width="24" height="24">
-        <span class="autocomplete-item-name">${escapeHtml(e.nameFr)}</span>
-        <span class="autocomplete-item-types">${typeTag(e.type1)}${e.type2 ? typeTag(e.type2) : ""}</span>
-        <span class="poke-meta">pwr ${e.power}</span>
-      </li>`,
-    )
-    .join("");
-  list.hidden = false;
-
-  for (const li of list.querySelectorAll<HTMLLIElement>(".autocomplete-item")) {
-    li.addEventListener("mousedown", (ev) => {
-      // mousedown plutôt que click : se déclenche avant le blur de l'input.
-      ev.preventDefault();
-      const idx = Number(li.dataset["idx"]);
-      const entry = currentMatches[idx];
-      if (entry) {
-        applyEntry(entry);
-        hideSuggestions();
-      }
-    });
-  }
-}
-
-function hideSuggestions(): void {
-  currentMatches = [];
-  activeIdx = -1;
-  const list = byId<HTMLUListElement>("inp-name-suggestions");
-  list.hidden = true;
-  list.innerHTML = "";
-}
-
-function onNameInput(): void {
-  const value = byId<HTMLInputElement>("inp-name").value;
-  currentMatches = searchPokedex(value);
-  activeIdx = currentMatches.length > 0 ? 0 : -1;
-  renderSuggestions();
-}
-
-function onNameKeydown(event: KeyboardEvent): void {
-  if (event.key === "ArrowDown" && currentMatches.length > 0) {
-    event.preventDefault();
-    activeIdx = (activeIdx + 1) % currentMatches.length;
-    renderSuggestions();
-    return;
-  }
-  if (event.key === "ArrowUp" && currentMatches.length > 0) {
-    event.preventDefault();
-    activeIdx = (activeIdx - 1 + currentMatches.length) % currentMatches.length;
-    renderSuggestions();
-    return;
-  }
-  if (event.key === "Escape") {
-    hideSuggestions();
-    return;
-  }
-  if (event.key === "Enter") {
-    const highlighted = activeIdx >= 0 ? currentMatches[activeIdx] : undefined;
-    if (highlighted) {
-      event.preventDefault();
-      applyEntry(highlighted);
-      hideSuggestions();
-      return;
-    }
-    addPoke("team");
-  }
-}
 
 export function bootstrap(): void {
   renderGenerationOptions();
@@ -274,15 +262,4 @@ export function bootstrap(): void {
   byId<HTMLSelectElement>("sel-battle").addEventListener("change", onBattleChange);
   byId<HTMLSelectElement>("sel-round").addEventListener("change", onConfigChange);
 
-  byId<HTMLButtonElement>("btn-add-team").addEventListener("click", () => addPoke("team"));
-  byId<HTMLButtonElement>("btn-add-box").addEventListener("click", () => addPoke("box"));
-
-  const nameInput = byId<HTMLInputElement>("inp-name");
-  nameInput.addEventListener("input", onNameInput);
-  nameInput.addEventListener("keydown", onNameKeydown);
-  nameInput.addEventListener("blur", () => {
-    // Laisse mousedown se déclencher avant de fermer.
-    setTimeout(hideSuggestions, 120);
-  });
-  nameInput.addEventListener("focus", onNameInput);
 }

@@ -203,7 +203,8 @@ function pokeSlotHtml(
   canMove: boolean,
 ): string {
   if (!p) {
-    return `<div class="poke-slot poke-slot-empty" aria-label="Emplacement ${idx + 1} vide"></div>`;
+    const addLabel = dest === "team" ? "Ajouter dans l'équipe" : "Ajouter dans la boîte PC";
+    return `<div class="poke-slot poke-slot-empty poke-add" data-dest="${dest}" data-idx="${idx}" role="button" tabindex="0" aria-label="${addLabel}"><span class="poke-add-icon" aria-hidden="true">+</span></div>`;
   }
   const types = `${typeTag(p.type1)}${p.type2 ? typeTag(p.type2) : ""}`;
   const sprite = p.id
@@ -259,6 +260,7 @@ export function renderLists(
   onRemove: (dest: "team" | "box", idx: number) => void,
   onMove: (dest: "team" | "box", idx: number) => void,
   onEvolve: (dest: "team" | "box", idx: number) => void,
+  onAdd: (dest: "team" | "box", idx: number) => void,
 ): void {
   byId("team-count").textContent = `(${team.length}/${TEAM_MAX})`;
   byId("box-count").textContent = `(${box.length})`;
@@ -284,6 +286,13 @@ export function renderLists(
       const dest = btn.dataset["dest"] as "team" | "box";
       const idx = Number(btn.dataset["idx"]);
       onEvolve(dest, idx);
+    });
+  }
+  for (const el of document.querySelectorAll<HTMLElement>(".poke-add")) {
+    el.addEventListener("click", () => {
+      const dest = el.dataset["dest"] as "team" | "box";
+      const idx = Number(el.dataset["idx"]);
+      onAdd(dest, idx);
     });
   }
 }

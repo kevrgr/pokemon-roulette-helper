@@ -197,28 +197,6 @@ button.primary:hover {
   flex: 1;
 }
 
-/* Boutons d'ajout teintés : marron pour l'équipe, violet pour la boîte PC.
-   Overrides `.primary` pour rester sur un fond clair. */
-#btn-add-team,
-#btn-add-team.primary {
-  background: rgba(139, 107, 71, 0.18);
-  color: var(--text);
-  border-color: rgba(139, 107, 71, 0.5);
-}
-#btn-add-team:hover,
-#btn-add-team.primary:hover {
-  background: rgba(139, 107, 71, 0.3);
-  opacity: 1;
-}
-
-#btn-add-box {
-  background: rgba(127, 119, 221, 0.18);
-  color: var(--text);
-  border-color: rgba(127, 119, 221, 0.5);
-}
-#btn-add-box:hover {
-  background: rgba(127, 119, 221, 0.3);
-}
 
 .pokemon-list {
   display: flex;
@@ -243,7 +221,7 @@ button.primary:hover {
 
 .box-grid .poke-slot {
   padding: 6px 4px;
-  height: 150px;
+  height: 180px;
   gap: 4px;
 }
 
@@ -288,13 +266,152 @@ button.primary:hover {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  height: 210px;
+  height: 250px;
   overflow: hidden;
 }
 
 .poke-slot-empty {
   border-style: dashed;
   opacity: 0.5;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.poke-slot-empty:hover {
+  opacity: 0.85;
+  border-color: var(--border-md);
+}
+
+.poke-slot-adding {
+  overflow: visible;
+  z-index: 5;
+}
+
+.poke-add-icon {
+  font-size: 36px;
+  line-height: 1;
+  color: var(--hint);
+  pointer-events: none;
+}
+
+.poke-slot-empty:hover .poke-add-icon {
+  color: var(--text);
+}
+
+.add-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  z-index: 10;
+  border: 1px solid var(--border-md);
+  padding: 28px 8px 8px;
+  overflow: visible;
+}
+
+.add-cancel {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--hint);
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.add-cancel:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.add-autocomplete {
+  position: relative;
+}
+
+.add-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 12px;
+  padding: 4px 8px;
+  background: var(--bg);
+  border: 0.5px solid var(--border-md);
+  border-radius: var(--radius);
+  color: var(--text);
+  outline: none;
+}
+
+.add-input:focus {
+  border-color: var(--border-strong, var(--border-md));
+}
+
+.add-suggestions {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  overflow-x: hidden;
+}
+
+.add-suggestions .autocomplete-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 6px;
+  row-gap: 2px;
+  font-size: 11px;
+  padding: 5px 7px;
+  min-width: 0;
+  align-items: center;
+}
+
+.add-suggestions .autocomplete-item .poke-sprite {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.add-suggestions .autocomplete-item-name {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  text-align: center;
+}
+
+.add-suggestions .autocomplete-item-types {
+  grid-column: 2;
+  grid-row: 2;
+  flex-direction: row;
+  gap: 4px;
+  justify-content: center;
+}
+
+.add-suggestions .autocomplete-item .poke-sprite {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+
+.add-suggestions .autocomplete-item .type-sprite {
+  height: 14px;
+  width: auto;
+}
+
+.add-suggestions .autocomplete-item .poke-id,
+.add-suggestions .autocomplete-item .poke-meta {
+  display: none;
 }
 
 .poke-slot-sprite-wrap {
