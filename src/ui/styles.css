@@ -220,7 +220,7 @@ button.primary:hover {
 }
 
 .box-grid .poke-slot {
-  padding: 6px 4px;
+  padding: 16px 4px;
   height: 180px;
   gap: 4px;
 }
@@ -431,8 +431,10 @@ button.primary:hover {
 }
 
 .poke-slot-name {
-  font-weight: 500;
-  font-size: 13px;
+  font-family: "Press Start 2P", monospace;
+  font-weight: 400;
+  font-size: 9px;
+  text-transform: uppercase;
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
@@ -454,8 +456,22 @@ button.primary:hover {
 }
 
 .team-grid .type-sprite {
-  height: 16px;
+  height: 18px;
   margin-right: 0;
+}
+
+.team-grid .poke-slot-sprite-wrap,
+.team-grid .poke-slot-sprite {
+  width: 110px;
+  height: 110px;
+}
+
+.team-grid .poke-slot-name {
+  font-size: 10px;
+}
+
+.team-grid .poke-slot-power {
+  font-size: 16px;
 }
 
 .poke-slot-power {
@@ -471,7 +487,7 @@ button.primary:hover {
   background: none;
   border: none;
   color: var(--red);
-  font-size: 12px;
+  font-size: 14px;
   padding: 2px 5px;
   cursor: pointer;
   border-radius: 4px;
@@ -507,6 +523,25 @@ button.primary:hover {
   background: var(--red-bg);
 }
 
+.poke-slot-swap {
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--hint);
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.poke-slot-swap:hover {
+  background: var(--blue-bg, color-mix(in srgb, var(--accent) 15%, transparent));
+  color: var(--accent);
+}
+
 .poke-slot-evolve {
   position: absolute;
   bottom: 2px;
@@ -514,7 +549,7 @@ button.primary:hover {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 18px;
   color: var(--hint);
   padding: 2px 4px;
   border-radius: 4px;
@@ -625,10 +660,57 @@ button.primary:hover {
   display: inline-block;
 }
 
+.best-line {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.best-poke-row {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  grid-auto-flow: column;
+  grid-auto-columns: 110px;
+  justify-content: center;
+  gap: 6px 16px;
+  flex: 1;
+}
+
 .swap-poke {
-  display: inline-flex;
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  justify-items: center;
+  align-items: start;
+}
+
+.swap-poke-info {
+  display: contents;
+}
+
+.swap-poke .poke-sprite {
+  width: 100px;
+  height: 100px;
+}
+
+.swap-poke-name {
+  font-family: "Press Start 2P", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.swap-poke-types {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   align-items: center;
-  gap: 4px;
+}
+
+.swap-poke .type-sprite {
+  height: 18px;
 }
 
 .poke-meta {
@@ -791,8 +873,10 @@ button.primary:hover {
 }
 
 .item-slot-name {
-  font-weight: 500;
-  font-size: 15px;
+  font-family: "Press Start 2P", monospace;
+  font-weight: 400;
+  font-size: 10px;
+  text-transform: uppercase;
 }
 
 .item-slot-stepper {

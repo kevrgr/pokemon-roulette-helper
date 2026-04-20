@@ -133,10 +133,12 @@ function startEvolveInline(dest: "team" | "box", idx: number): void {
   overlay.addEventListener("mouseleave", () => overlay.remove());
 }
 
-function startAddInline(dest: "team" | "box", idx: number): void {
+function startAddInline(dest: "team" | "box", idx: number, swapMode = false): void {
   const gridId = dest === "team" ? "team-list" : "box-list";
   const slotMaybe = byId(gridId).querySelectorAll<HTMLElement>(".poke-slot")[idx];
-  if (!slotMaybe?.classList.contains("poke-slot-empty")) return;
+  if (!slotMaybe) return;
+  const isEmpty = slotMaybe.classList.contains("poke-slot-empty");
+  if (swapMode ? isEmpty : !isEmpty) return;
   const slotEl: HTMLElement = slotMaybe;
 
   slotEl.querySelector(".add-overlay")?.remove();
@@ -186,8 +188,14 @@ function startAddInline(dest: "team" | "box", idx: number): void {
   function confirmAdd(entry: PokedexEntry): void {
     const pk: UIPokemon = { name: entry.nameFr, type1: entry.type1, power: entry.power, id: entry.id };
     if (entry.type2) pk.type2 = entry.type2;
-    if (dest === "team" && team.length < TEAM_MAX) team.push(pk);
-    else if (dest === "box") box.push(pk);
+    if (swapMode) {
+      const arr = dest === "team" ? team : box;
+      arr[idx] = pk;
+    } else if (dest === "team" && team.length < TEAM_MAX) {
+      team.push(pk);
+    } else if (dest === "box") {
+      box.push(pk);
+    }
     renderListsAndRecalc();
   }
 
@@ -235,8 +243,12 @@ function startAddInline(dest: "team" | "box", idx: number): void {
   input.focus();
 }
 
+function startSwapInline(dest: "team" | "box", idx: number): void {
+  startAddInline(dest, idx, true);
+}
+
 function renderListsAndRecalc(): void {
-  renderLists(removePoke, movePoke, startEvolveInline, startAddInline);
+  renderLists(removePoke, movePoke, startEvolveInline, startAddInline, startSwapInline);
   recalc();
 }
 

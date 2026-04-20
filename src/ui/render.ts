@@ -225,6 +225,7 @@ function pokeSlotHtml(
     <div class="poke-slot">
       <button type="button" class="poke-slot-move poke-move" data-dest="${dest}" data-idx="${idx}" aria-label="${moveLabel}"${moveTitle}${disabled}>${moveIcon}</button>
       <button type="button" class="poke-slot-remove poke-remove" data-dest="${dest}" data-idx="${idx}" aria-label="Retirer ${escapeHtml(p.name)}">✕</button>
+      <button type="button" class="poke-slot-swap poke-swap" data-dest="${dest}" data-idx="${idx}" aria-label="Remplacer ${escapeHtml(p.name)}" title="Remplacer">⇄</button>
       ${evolveBtn}
       <div class="poke-slot-sprite-wrap">${sprite}</div>
       <span class="poke-slot-name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</span>
@@ -261,6 +262,7 @@ export function renderLists(
   onMove: (dest: "team" | "box", idx: number) => void,
   onEvolve: (dest: "team" | "box", idx: number) => void,
   onAdd: (dest: "team" | "box", idx: number) => void,
+  onSwap: (dest: "team" | "box", idx: number) => void,
 ): void {
   byId("team-count").textContent = `(${team.length}/${TEAM_MAX})`;
   byId("box-count").textContent = `(${box.length})`;
@@ -293,6 +295,13 @@ export function renderLists(
       const dest = el.dataset["dest"] as "team" | "box";
       const idx = Number(el.dataset["idx"]);
       onAdd(dest, idx);
+    });
+  }
+  for (const btn of document.querySelectorAll<HTMLButtonElement>(".poke-swap")) {
+    btn.addEventListener("click", () => {
+      const dest = btn.dataset["dest"] as "team" | "box";
+      const idx = Number(btn.dataset["idx"]);
+      onSwap(dest, idx);
     });
   }
 }
@@ -336,32 +345,6 @@ export function renderResult(battle: BattleKind, gen: GenerationId, roundIdx: nu
       ? `+ ${result.retry_bonus} tentative(s) supplémentaire(s) grâce aux potions.`
       : "";
 
-  const swapList = byId("swap-list");
-  if (result.swap_suggestions.length === 0) {
-    swapList.innerHTML =
-      box.length > 0
-        ? '<p class="empty-hint">Aucun swap avantageux avec la boîte actuelle.</p>'
-        : '<p class="empty-hint">Ajoutez des Pokémons dans la boîte PC pour voir les suggestions.</p>';
-  } else {
-    swapList.innerHTML = result.swap_suggestions
-      .map((s) => {
-        const remove = s.remove as UIPokemon;
-        const add = s.add as UIPokemon;
-        return `
-          <div class="swap-row">
-            <span class="swap-poke">${spriteImg(remove.id, remove.name)}${escapeHtml(remove.name)} ${typeTag(remove.type1)}${
-              remove.type2 ? typeTag(remove.type2) : ""
-            }</span>
-            <span class="swap-arrow">→</span>
-            <span class="swap-poke">${spriteImg(add.id, add.name)}${escapeHtml(add.name)} ${typeTag(add.type1)}${
-              add.type2 ? typeTag(add.type2) : ""
-            }</span>
-            <span class="swap-gain">+${s.gain}% (→ ${s.new_pct}%)</span>
-          </div>`;
-      })
-      .join("");
-  }
-
   renderBestTeam(battle, gen, roundIdx, result.pct);
 }
 
@@ -386,19 +369,13 @@ function renderBestTeam(
   }
 
   const pokeLine = (p: UIPokemon): string =>
-    `<span class="swap-poke">${spriteImg(p.id, p.name)}${escapeHtml(p.name)} ${typeTag(p.type1)}${
-      p.type2 ? typeTag(p.type2) : ""
-    }</span>`;
+    `<span class="swap-poke">${spriteImg(p.id, p.name)}<span class="swap-poke-info"><span class="swap-poke-name">${escapeHtml(p.name)}</span><span class="swap-poke-types">${typeTag(p.type1)}${p.type2 ? typeTag(p.type2) : ""}</span></span></span>`;
 
   const addedHtml = best.added.length
-    ? `<div class="best-line"><span class="best-label">Entrer :</span>${(best.added as UIPokemon[])
-        .map(pokeLine)
-        .join("")}</div>`
+    ? `<div class="best-line"><span class="best-label">Ajouter :</span><div class="best-poke-row">${(best.added as UIPokemon[]).map(pokeLine).join("")}</div></div>`
     : "";
   const removedHtml = best.removed.length
-    ? `<div class="best-line"><span class="best-label">Sortir :</span>${(best.removed as UIPokemon[])
-        .map(pokeLine)
-        .join("")}</div>`
+    ? `<div class="best-line"><span class="best-label">Retirer :</span><div class="best-poke-row">${(best.removed as UIPokemon[]).map(pokeLine).join("")}</div></div>`
     : "";
 
   el.innerHTML = `
